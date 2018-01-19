@@ -1,0 +1,11 @@
+{
+  "name": "DELTRON-3151",
+  "version": "1.0.0",
+  "main": "main.js",
+  "repository": "git@github.com:AgaveGames/DELTRON-3151.git",
+  "author": "AgaveGames",
+  "license": "MIT",
+  "dependencies": {
+    "phaser": "^2.6.2"
+  }
+}
