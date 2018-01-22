@@ -110,12 +110,12 @@ __webpack_require__(5);
 __webpack_require__(7);
 __webpack_require__(9);
 
-let SCREEN_WIDTH = 960;
-let SCREEN_HEIGHT = 640;
+const SCREEN_WIDTH = 960;
+const SCREEN_HEIGHT = 640;
 
-let game = new Phaser.Game(SCREEN_WIDTH, SCREEN_HEIGHT, Phaser.CANVAS, 'game');
+const game = new Phaser.Game(SCREEN_WIDTH, SCREEN_HEIGHT, Phaser.CANVAS, 'game');
 
-let PhaserGame = function (game) {
+const PhaserGame = function (game) {
   this.map = null;
   this.layer = null;
   this.hero = null;
