@@ -23,15 +23,12 @@ var PhaserGame = function (game) {
   };
 
   this.statusBar = {};
-  // TODO: make a status bar layout object with height/width/padding etc.
-  this.statusBarWidth = this.gridsize * 5;
-  this.statusBarPadding = this.gridsize * 2;
-  this.statusBarBounds = [
-    SCREEN_WIDTH - this.statusBarWidth,   // x
-    this.statusBarPadding, // y
-    this.statusbarWidth,   // width
-    SCREEN_HEIGHT - this.statusBarPadding // height
-  ];
+  this.statusBarDimensions = {};
+
+  this.statusBarDimensions.width = this.gridsize * 5;
+  this.statusBarDimensions.padding = this.gridsize;
+  this.statusBarDimensions.x = SCREEN_WIDTH - this.statusBarDimensions.width + this.statusBarDimensions.padding;
+  this.statusBarDimensions.y = this.statusBarDimensions.padding;
 };
 
 PhaserGame.prototype = {
@@ -76,12 +73,18 @@ PhaserGame.prototype = {
     var index = 0;
     var numOfAttributes = parseFloat(Object.keys(this.heroAttributes).length);
     for (var attribute in this.heroAttributes) {
-      this.statusBar[attribute] = this.add.text(null, null, null, { fill: "#fff", fontSize: 16 });
+      this.statusBar[attribute] = this.add.text(null, null, null, { fill: "#fff", fontSize: this.gridsize / 2 });
 
       // TODO: replace with spread operator once we support ES6
-      this.statusBar[attribute].setTextBounds.apply(this.statusBar[attribute], this.statusBarBounds)
+      // es6: const { x, y, width, height } = this.statusBar;
+      var x = this.statusBarDimensions.x;
+      var y = this.statusBarDimensions.y;
+      var width = this.statusBarDimensions.width;
+      var height = this.statusBarDimensions.height;
+      this.statusBar[attribute].setTextBounds.apply(this.statusBar[attribute], [x, y, width, height])
       // TODO: refactor this calculation
-      this.statusBar[attribute].top = (parseFloat(index) / numOfAttributes ) * (SCREEN_HEIGHT - this.statusBarPadding);
+      var spacing = this.gridsize * 2;
+      this.statusBar[attribute].top = (parseFloat(index) / numOfAttributes ) * (spacing);
       
       index += 1;
     }
@@ -142,9 +145,10 @@ PhaserGame.prototype = {
       {
         //  And fire it
         this.attacks.reset(this.activeTile.worldX+16, this.activeTile.worldY+16);
-        this.heroAttributes.speed -= 60;
-        this.heroAttributes.health -= 3;
         this.attackTime = this.time.now + 1500;
+        // example side effects for debugging purposes
+        this.heroAttributes.speed -= 10;
+        this.heroAttributes.health -= 3;
       }
     }
   },
