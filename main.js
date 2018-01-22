@@ -1,3 +1,14 @@
+import _ from 'lodash';
+// import 'phaser/build/custom/pixi.js';
+// import 'p2';
+// import * as Phaser from 'phaser';
+// var Phaser = require('phaser');
+// uk
+
+require('pixi.js');
+require('p2');
+require('phaser');
+
 var SCREEN_WIDTH = 960;
 var SCREEN_HEIGHT = 640;
 
@@ -19,7 +30,8 @@ var PhaserGame = function (game) {
     speed: 300,
     health: 100,
     attack: 1,
-    defense: 1
+    defense: 1,
+    magic: 48
   };
 
   this.statusBar = {};
@@ -71,7 +83,6 @@ PhaserGame.prototype = {
     this.cursors = this.input.keyboard.createCursorKeys();
 
     var index = 0;
-    var numOfAttributes = parseFloat(Object.keys(this.heroAttributes).length);
     for (var attribute in this.heroAttributes) {
       this.statusBar[attribute] = this.add.text(null, null, null, { fill: "#fff", fontSize: this.gridsize / 2 });
 
@@ -81,10 +92,9 @@ PhaserGame.prototype = {
       var y = this.statusBarDimensions.y;
       var width = this.statusBarDimensions.width;
       var height = this.statusBarDimensions.height;
+
       this.statusBar[attribute].setTextBounds.apply(this.statusBar[attribute], [x, y, width, height])
-      // TODO: refactor this calculation
-      var spacing = this.gridsize * 2;
-      this.statusBar[attribute].top = (parseFloat(index) / numOfAttributes ) * (spacing);
+      this.statusBar[attribute].top = index * this.gridsize / 2;
       
       index += 1;
     }
@@ -96,7 +106,7 @@ PhaserGame.prototype = {
 
     // It would be nice if this could be conditionally performed
     for (var attribute in this.heroAttributes) {
-      this.statusBar[attribute].setText(attribute+": "+this.heroAttributes[attribute]);
+      this.statusBar[attribute].setText(_.capitalize(attribute)+": "+this.heroAttributes[attribute]);
     }
 
     this.marker.x = this.math.snapToFloor(Math.floor(this.hero.x), this.gridsize) / this.gridsize;
