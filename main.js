@@ -1,4 +1,4 @@
-var game = new Phaser.Game(960, 640, Phaser.CANVAS, 'game');
+var game = new Phaser.Game(1200, 640, Phaser.CANVAS, 'game');
 
 var PhaserGame = function (game) {
   this.map = null;
@@ -11,6 +11,7 @@ var PhaserGame = function (game) {
   this.attack = null;
   this.attacks = null;
   this.attackTime = null;
+  this.panel = null;
 
 };
 
@@ -21,8 +22,9 @@ PhaserGame.prototype = {
   },
 
   preload: function () {
-    this.load.tilemap('map', 'assets/firstMap.json', null, Phaser.Tilemap.TILED_JSON);
+    this.load.tilemap('map', 'assets/playground2.json', null, Phaser.Tilemap.TILED_JSON);
     this.load.image('tiles', 'assets/tiles.png');
+    this.load.image('panel', 'assets/panel.png');
     this.load.image('attack', 'assets/attackArea3.png');
     this.load.spritesheet('ship', 'assets/UFO.png', 32, 32)
   },
@@ -34,39 +36,42 @@ PhaserGame.prototype = {
     this.map.addTilesetImage('tiles', 'tiles');
     this.layer = this.map.createLayer('Tile Layer 1');
     this.map.setCollision(20, true, this.layer);
+    this.world.setBounds(0, 0, 4352, 4160);
 
 
     // attack group
     this.attacks = this.add.sprite(null, null, 'attack');
     this.attacks.anchor.set(0.5)
-
+    
 
     // hero
-    this.hero = this.add.sprite(48, 48, 'ship');
+    this.hero = this.add.sprite(this.world.centerX-96, this.world.centerY, 'ship');
     this.hero.anchor.set(0.5);
     this.physics.arcade.enable(this.hero);
     this.hero.animations.add('spin', [0,1,2,3], 10, true);
     this.hero.animations.play('spin');
-
+      
+    this.panel = this.add.sprite(this.camera.x+1008, this.camera.y, 'panel');
+    this.panel.fixedToCamera = true;
+      
+      
     //input object
     this.cursors = this.input.keyboard.createCursorKeys();
-
+      
   },
 
 
   update: function () {
 
     this.physics.arcade.collide(this.hero, this.layer);
-
-
+      
     this.marker.x = this.math.snapToFloor(Math.floor(this.hero.x), this.gridsize) / this.gridsize;
     this.marker.y = this.math.snapToFloor(Math.floor(this.hero.y), this.gridsize) / this.gridsize;
     this.activeTile = this.map.getTile(this.marker.x, this.marker.y, 'Tile Layer 1');
 
-
     this.hero.body.velocity.x = 0;
     this.hero.body.velocity.y = 0;
-
+      
     if (this.cursors.left.isDown)
     {
       this.hero.body.velocity.x = -this.speed;
@@ -89,14 +94,10 @@ PhaserGame.prototype = {
     }
 
     this.resetAttack();
-
+    this.camera.focusOnXY(this.hero.x+96, this.hero.y);
 
   },
-
-  render: function () {
-    //this.game.debug.geom(new Phaser.Rectangle(this.activeTile.worldX, this.activeTile.worldY, 32, 32), '#ffff00', false);
-    //console.log(this.activeTile.x)
-  },    
+   
 
   attackArea: function () {
     if (this.time.now > this.attackTime)
@@ -110,7 +111,8 @@ PhaserGame.prototype = {
       }
     }
   },
-
+    
+    
   resetAttack: function () {
     if (this.attacks && this.time.now > this.attackTime-100)
     {
@@ -125,7 +127,8 @@ PhaserGame.prototype = {
       }
     }
   }
-
+    
+    
 }
 
 game.state.add('Game', PhaserGame, true);
