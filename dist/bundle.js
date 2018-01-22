@@ -125,7 +125,6 @@ let PhaserGame = function (game) {
   this.attack = null;
   this.attacks = null;
   this.attackTime = null;
-  this.statusMenu = null;
   // eventually load attributes from cached state
   this.heroAttributes = {
     speed: 300,
@@ -163,7 +162,6 @@ PhaserGame.prototype = {
     this.map = this.add.tilemap('map');
     this.map.addTilesetImage('tiles', 'tiles');
     this.layer = this.map.createLayer('Tile Layer 1');
-    this.statusMenu = this.map.createLayer('Status Menu');
     this.map.setCollision(20, true, this.layer);
 
     // attack group
