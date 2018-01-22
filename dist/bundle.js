@@ -105,22 +105,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash__ = __webpack_require__(2);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_lodash__);
 
-// import 'phaser/build/custom/pixi.js';
-// import 'p2';
-// import * as Phaser from 'phaser';
-// var Phaser = require('phaser');
-// uk
-
+// NOTE: Phaser3 will be importable: e.g. import Phaser from 'phaser';
 __webpack_require__(5);
 __webpack_require__(7);
 __webpack_require__(9);
 
-var SCREEN_WIDTH = 960;
-var SCREEN_HEIGHT = 640;
+let SCREEN_WIDTH = 960;
+let SCREEN_HEIGHT = 640;
 
-var game = new Phaser.Game(SCREEN_WIDTH, SCREEN_HEIGHT, Phaser.CANVAS, 'game');
+let game = new Phaser.Game(SCREEN_WIDTH, SCREEN_HEIGHT, Phaser.CANVAS, 'game');
 
-var PhaserGame = function (game) {
+let PhaserGame = function (game) {
   this.map = null;
   this.layer = null;
   this.hero = null;
@@ -159,7 +154,7 @@ PhaserGame.prototype = {
     this.load.tilemap('map', 'assets/firstMap.json', null, Phaser.Tilemap.TILED_JSON);
     this.load.image('tiles', 'assets/tiles.png');
     this.load.image('attack', 'assets/attackArea3.png');
-    this.load.spritesheet('ship', 'assets/UFO.png', this.gridsize, this.gridsize)
+    this.load.spritesheet('ship', 'assets/UFO.png', this.gridsize, this.gridsize);
   },
 
   create: function () {
@@ -171,48 +166,40 @@ PhaserGame.prototype = {
     this.statusMenu = this.map.createLayer('Status Menu');
     this.map.setCollision(20, true, this.layer);
 
-
     // attack group
     this.attacks = this.add.sprite(null, null, 'attack');
-    this.attacks.anchor.set(0.5)
-
+    this.attacks.anchor.set(0.5);
 
     // hero
     this.hero = this.add.sprite(48, 48, 'ship');
     this.hero.anchor.set(0.5);
     this.hero.setHealth(this.heroAttributes.health);
     this.physics.arcade.enable(this.hero);
-    this.hero.animations.add('spin', [0,1,2,3], 10, true);
+    this.hero.animations.add('spin', [0, 1, 2, 3], 10, true);
     this.hero.animations.play('spin');
 
     //input object
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    var index = 0;
-    for (var attribute in this.heroAttributes) {
+    let index = 0;
+    for (let attribute in this.heroAttributes) {
       this.statusBar[attribute] = this.add.text(null, null, null, { fill: "#fff", fontSize: this.gridsize / 2 });
 
-      // TODO: replace with spread operator once we support ES6
-      // es6: const { x, y, width, height } = this.statusBar;
-      var x = this.statusBarDimensions.x;
-      var y = this.statusBarDimensions.y;
-      var width = this.statusBarDimensions.width;
-      var height = this.statusBarDimensions.height;
+      const { x, y, width, height } = this.statusBarDimensions;
 
-      this.statusBar[attribute].setTextBounds.apply(this.statusBar[attribute], [x, y, width, height])
+      this.statusBar[attribute].setTextBounds.apply(this.statusBar[attribute], [x, y, width, height]);
       this.statusBar[attribute].top = index * this.gridsize / 2;
-      
+
       index += 1;
     }
-
   },
 
   update: function () {
     this.physics.arcade.collide(this.hero, this.layer);
 
     // It would be nice if this could be conditionally performed
-    for (var attribute in this.heroAttributes) {
-      this.statusBar[attribute].setText(__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.capitalize(attribute)+": "+this.heroAttributes[attribute]);
+    for (let attribute in this.heroAttributes) {
+      this.statusBar[attribute].setText(__WEBPACK_IMPORTED_MODULE_0_lodash___default.a.capitalize(attribute) + ": " + this.heroAttributes[attribute]);
     }
 
     this.marker.x = this.math.snapToFloor(Math.floor(this.hero.x), this.gridsize) / this.gridsize;
@@ -222,45 +209,33 @@ PhaserGame.prototype = {
     this.hero.body.velocity.x = 0;
     this.hero.body.velocity.y = 0;
 
-    if (this.cursors.left.isDown)
-    {
+    if (this.cursors.left.isDown) {
       this.hero.body.velocity.x = -this.heroAttributes.speed;
     }
-    if (this.cursors.right.isDown)
-    {
+    if (this.cursors.right.isDown) {
       this.hero.body.velocity.x = this.heroAttributes.speed;
     }
-    if (this.cursors.up.isDown)
-    {
+    if (this.cursors.up.isDown) {
       this.hero.body.velocity.y = -this.heroAttributes.speed;
     }
-    if (this.cursors.down.isDown)
-    {
+    if (this.cursors.down.isDown) {
       this.hero.body.velocity.y = this.heroAttributes.speed;
     }
-    if (this.input.keyboard.isDown(16))
-    {
+    if (this.input.keyboard.isDown(16)) {
       this.attackArea();
     }
 
     this.resetAttack();
-
-
   },
 
-  render: function () {
-    //this.game.debug.geom(new Phaser.Rectangle(this.activeTile.worldX, this.activeTile.worldY, 32, 32), '#ffff00', false);
-    //console.log(this.activeTile.x)
-  },    
+  render: function () {},
 
   attackArea: function () {
-    if (this.time.now > this.attackTime)
-    {
+    if (this.time.now > this.attackTime) {
 
-      if (this.attacks)
-      {
+      if (this.attacks) {
         //  And fire it
-        this.attacks.reset(this.activeTile.worldX+16, this.activeTile.worldY+16);
+        this.attacks.reset(this.activeTile.worldX + 16, this.activeTile.worldY + 16);
         this.attackTime = this.time.now + 1500;
         // example side effects for debugging purposes
         this.heroAttributes.speed -= 10;
@@ -270,25 +245,19 @@ PhaserGame.prototype = {
   },
 
   resetAttack: function () {
-    if (this.attacks && this.time.now > this.attackTime-100)
-    {
+    if (this.attacks && this.time.now > this.attackTime - 100) {
       this.attacks.kill();
       this.attacks.alpha = 1;
-    }
-    else
-    {
-      if (this.attacks.alpha >= .015)
-      {
+    } else {
+      if (this.attacks.alpha >= .015) {
         this.attacks.alpha -= .015;
       }
     }
   }
 
-}
+};
 
 game.state.add('Game', PhaserGame, true);
-
-
 
 /***/ }),
 /* 2 */

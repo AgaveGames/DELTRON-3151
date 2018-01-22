@@ -27,9 +27,23 @@ module.exports = {
     devtool: 'source-map',
     module: {
         rules: [
-            { test: /pixi\.js/, use: 'script-loader' },
-            { test: /p2\.js/, use: 'script-loader' },
-            { test: /phaser-split\.js$/, use: 'script-loader' }
+            { 
+                test: /\.js$/, 
+                exclude: /node_modules/, 
+                use: 'babel-loader'
+            },
+            { 
+                test: /pixi\.js/, 
+                use: 'script-loader' 
+            },
+            { 
+                test: /p2\.js/, 
+                use: 'script-loader' 
+            },
+            { 
+                test: /phaser-split\.js$/, 
+                use: 'script-loader'
+            }
         ]
     },
     plugins: NODE_ENV === 'production' ? [ new webpack.optimize.UglifyJsPlugin() ] : []

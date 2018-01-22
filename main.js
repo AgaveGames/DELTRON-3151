@@ -1,20 +1,15 @@
 import _ from 'lodash';
-// import 'phaser/build/custom/pixi.js';
-// import 'p2';
-// import * as Phaser from 'phaser';
-// var Phaser = require('phaser');
-// uk
-
+// NOTE: Phaser3 will be importable: e.g. import Phaser from 'phaser';
 require('pixi.js');
 require('p2');
 require('phaser');
 
-var SCREEN_WIDTH = 960;
-var SCREEN_HEIGHT = 640;
+let SCREEN_WIDTH = 960;
+let SCREEN_HEIGHT = 640;
 
-var game = new Phaser.Game(SCREEN_WIDTH, SCREEN_HEIGHT, Phaser.CANVAS, 'game');
+let game = new Phaser.Game(SCREEN_WIDTH, SCREEN_HEIGHT, Phaser.CANVAS, 'game');
 
-var PhaserGame = function (game) {
+let PhaserGame = function (game) {
   this.map = null;
   this.layer = null;
   this.hero = null;
@@ -82,16 +77,11 @@ PhaserGame.prototype = {
     //input object
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    var index = 0;
-    for (var attribute in this.heroAttributes) {
+    let index = 0;
+    for (let attribute in this.heroAttributes) {
       this.statusBar[attribute] = this.add.text(null, null, null, { fill: "#fff", fontSize: this.gridsize / 2 });
 
-      // TODO: replace with spread operator once we support ES6
-      // es6: const { x, y, width, height } = this.statusBar;
-      var x = this.statusBarDimensions.x;
-      var y = this.statusBarDimensions.y;
-      var width = this.statusBarDimensions.width;
-      var height = this.statusBarDimensions.height;
+      const { x, y, width, height } = this.statusBarDimensions;
 
       this.statusBar[attribute].setTextBounds.apply(this.statusBar[attribute], [x, y, width, height])
       this.statusBar[attribute].top = index * this.gridsize / 2;
@@ -105,7 +95,7 @@ PhaserGame.prototype = {
     this.physics.arcade.collide(this.hero, this.layer);
 
     // It would be nice if this could be conditionally performed
-    for (var attribute in this.heroAttributes) {
+    for (let attribute in this.heroAttributes) {
       this.statusBar[attribute].setText(_.capitalize(attribute)+": "+this.heroAttributes[attribute]);
     }
 
@@ -138,14 +128,9 @@ PhaserGame.prototype = {
     }
 
     this.resetAttack();
-
-
   },
 
-  render: function () {
-    //this.game.debug.geom(new Phaser.Rectangle(this.activeTile.worldX, this.activeTile.worldY, 32, 32), '#ffff00', false);
-    //console.log(this.activeTile.x)
-  },    
+  render: function () { },    
 
   attackArea: function () {
     if (this.time.now > this.attackTime)
