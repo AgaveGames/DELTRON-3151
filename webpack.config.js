@@ -32,10 +32,5 @@ module.exports = {
             { test: /phaser-split\.js$/, use: 'script-loader' }
         ]
     },
-    plugins: NODE_ENV === 'production' ? [ new webpack.optimize.UglifyJsPlugin() ] : [],
-    devServer: {
-        contentBase: BUILD_DIR,
-        port: 8000,
-        stats: 'minimal'
-    }
+    plugins: NODE_ENV === 'production' ? [ new webpack.optimize.UglifyJsPlugin() ] : []
 };
