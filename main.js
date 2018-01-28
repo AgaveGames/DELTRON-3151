@@ -1,9 +1,15 @@
-var screenWidth = 1200;
-var screenHeight = 640;
+import _ from 'lodash';
+// NOTE: Phaser3 will be importable: e.g. import Phaser from 'phaser';
+require('pixi.js');
+require('p2');
+require('phaser');
 
-var game = new Phaser.Game(screenWidth, screenHeight, Phaser.CANVAS, 'game');
+const SCREEN_WIDTH = 960;
+const SCREEN_HEIGHT = 640;
 
-var PhaserGame = function (game) {
+const game = new Phaser.Game(SCREEN_WIDTH, SCREEN_HEIGHT, Phaser.CANVAS, 'game');
+
+const PhaserGame = function (game) {
     
     this.map = null;
     this.tilesHigh = 130;
@@ -25,6 +31,22 @@ var PhaserGame = function (game) {
     this.panelWidth = 192;
     this.wallTileNum = 20;
 
+  // eventually load attributes from cached state
+  this.heroAttributes = {
+    speed: 300,
+    health: 100,
+    attack: 1,
+    defense: 1,
+    magic: 48
+  };
+
+  this.statusBar = {};
+  this.statusBarDimensions = {};
+
+  this.statusBarDimensions.width = this.gridsize * 5;
+  this.statusBarDimensions.padding = this.gridsize;
+  this.statusBarDimensions.x = SCREEN_WIDTH - this.statusBarDimensions.width + this.statusBarDimensions.padding;
+  this.statusBarDimensions.y = this.statusBarDimensions.padding;
 };
 
 PhaserGame.prototype = {
@@ -62,6 +84,7 @@ PhaserGame.prototype = {
         this.physics.arcade.enable(this.hero);
         this.hero.animations.add('spin', [0,1,2,3], 10, true);
         this.hero.animations.play('spin');
+		this.hero.setHealth(this.heroAttributes.health);
       
         this.panel = this.add.sprite(this.camera.x+(screenWidth-this.panelWidth), this.camera.y, 'panel');
         this.panel.fixedToCamera = true;
@@ -69,11 +92,22 @@ PhaserGame.prototype = {
       
         //input object
         this.cursors = this.input.keyboard.createCursorKeys();
+
+    let index = 0;
+    for (let attribute in this.heroAttributes) {
+      this.statusBar[attribute] = this.add.text(null, null, null, { fill: "#fff", fontSize: this.gridsize / 2 });
+            const { x, y, width, height } = this.statusBarDimensions;
+
+      this.statusBar[attribute].setTextBounds.apply(this.statusBar[attribute], [x, y, width, height])
+      this.statusBar[attribute].top = index * this.gridsize / 2;
       
+      index += 1;
+    }
     },
 
 
     update: function () {
+
 
         this.physics.arcade.collide(this.hero, this.layer);
       
@@ -81,35 +115,46 @@ PhaserGame.prototype = {
         this.marker.y = this.math.snapToFloor(Math.floor(this.hero.y), this.gridsize) / this.gridsize;
         this.activeTile = this.map.getTile(this.marker.x, this.marker.y, 'Tile Layer 1');
 
-        this.hero.body.velocity.x = 0;
-        this.hero.body.velocity.y = 0;
-      
-        if (this.cursors.left.isDown)
-        {
-            this.hero.body.velocity.x = -this.speed;
-        }
-        if (this.cursors.right.isDown)
-        {
-            this.hero.body.velocity.x = this.speed;
-        }
-        if (this.cursors.up.isDown)
-        {
-            this.hero.body.velocity.y = -this.speed;
-        }
-        if (this.cursors.down.isDown)
-        {
-            this.hero.body.velocity.y = this.speed;
-        }
-        if (this.input.keyboard.isDown(16))
-        {
-            this.attackArea();
-        }
+
+
+
+    // It would be nice if this could be conditionally performed
+    for (let attribute in this.heroAttributes) {
+      this.statusBar[attribute].setText(_.capitalize(attribute)+": "+this.heroAttributes[attribute]);
+    }
+
+
+    this.hero.body.velocity.x = 0;
+    this.hero.body.velocity.y = 0;
+
+    if (this.cursors.left.isDown)
+    {
+      this.hero.body.velocity.x = -this.heroAttributes.speed;
+    }
+    if (this.cursors.right.isDown)
+    {
+      this.hero.body.velocity.x = this.heroAttributes.speed;
+    }
+    if (this.cursors.up.isDown)
+    {
+      this.hero.body.velocity.y = -this.heroAttributes.speed;
+    }
+    if (this.cursors.down.isDown)
+    {
+      this.hero.body.velocity.y = this.heroAttributes.speed;
+    }
+    if (this.input.keyboard.isDown(16))
+    {
+      this.attackArea();
+    }
 
     this.resetAttack();
     this.camera.focusOnXY(this.hero.x+(this.panelWidth/2), this.hero.y);
 
     },
    
+
+  render: function () { },    
 
   attackArea: function () {
     if (this.time.now > this.attackTime)

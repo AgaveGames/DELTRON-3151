@@ -1,11 +1,21 @@
 {
   "name": "DELTRON-3151",
   "version": "1.0.0",
-  "main": "main.js",
+  "scripts": {
+    "build": "rm -rf dist/*.js && webpack --watch --watch-poll --config webpack.config.js"
+  },
   "repository": "git@github.com:AgaveGames/DELTRON-3151.git",
   "author": "AgaveGames",
   "license": "MIT",
   "dependencies": {
+    "lodash": "^4.17.4",
     "phaser": "^2.6.2"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "script-loader": "^0.7.2",
+    "webpack": "^3.10.0"
   }
 }
